@@ -23,6 +23,7 @@ public class N8nWebhookEmailAdapter implements EmailNotifierPort {
 
     @Override
     public void sendOtp(String to, String code, int expiresInMinutes) {
+
         String body = String.format(
                 "{\"to\":\"%s\",\"code\":\"%s\",\"expiresInMinutes\":%d}",
                 to, code, expiresInMinutes);
@@ -30,17 +31,19 @@ public class N8nWebhookEmailAdapter implements EmailNotifierPort {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(webhookUrl))
                 .header("Content-Type", "application/json")
-                .header("X-Webhook-Token", webhookSecret)
+                .header("x-webhook-token", webhookSecret)
                 .POST(HttpRequest.BodyPublishers.ofString(body))
                 .timeout(Duration.ofMillis(timeoutMs))
                 .build();
 
         try {
             var resp = http.send(request, HttpResponse.BodyHandlers.ofString());
-            if (resp.statusCode() != 200)
-                throw new RuntimeException("n8n error: " + resp.statusCode());
+
+            if (resp.statusCode() < 200 || resp.statusCode() >= 300) {
+                throw new RuntimeException("n8n error: " + resp.statusCode() + " - " + resp.body());
+            }
+
         } catch (Exception e) {
-            // Log y relanzar — el controller maneja el error al usuario
             throw new RuntimeException("No se pudo enviar el código: " + e.getMessage(), e);
         }
     }
