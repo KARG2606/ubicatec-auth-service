@@ -35,9 +35,7 @@ management:
 
 logging:
   level:
-    root: INFO
-    org.springframework: INFO
-    org.hibernate: INFO
+    root: DEBUG
 
 ---
 spring:
