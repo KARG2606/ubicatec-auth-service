@@ -75,4 +75,21 @@ public class RsaJwtIssuerAdapter implements TokenIssuerPort {
                 e
         );
     }
+    @Override
+    public java.security.PublicKey getPublicKey() {
+        return keyPair.getPublic();
+    }
+
+    @Override
+    public String issueAccessTokenFromSubject(String userId) {
+        Instant now = Instant.now();
+        return Jwts.builder()
+                .subject(userId)
+                .issuer("ubicatec-auth")
+                .issuedAt(Date.from(now))
+                .expiration(Date.from(now.plusSeconds(3600)))
+                .signWith(keyPair.getPrivate())
+                .compact();
+    }
+
 }

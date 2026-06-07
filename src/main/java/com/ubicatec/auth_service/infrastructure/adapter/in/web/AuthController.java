@@ -6,11 +6,11 @@ import com.ubicatec.auth_service.infrastructure.adapter.in.web.dto.SendCodeReque
 import com.ubicatec.auth_service.infrastructure.adapter.in.web.dto.VerifyCodeRequest;
 import com.ubicatec.auth_service.domain.port.in.*;
 import com.ubicatec.auth_service.domain.port.out.TokenIssuerPort;
+import io.jsonwebtoken.Jwts;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/v1/auth")
@@ -40,6 +40,37 @@ public class AuthController {
     public ResponseEntity<?> verifyCode(@Valid @RequestBody VerifyCodeRequest req) {
         var pair = verifyCode.verifyCode(req.email(), req.code());
         return ResponseEntity.ok(pair);
+    }
+
+    // 4. Refresh — renueva el access token usando el refresh token
+    @PostMapping("/refresh")
+    public ResponseEntity<?> refresh(@RequestHeader("Authorization") String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(401).body(Map.of("error", "Refresh token requerido"));
+        }
+        String refreshToken = authHeader.substring(7);
+        try {
+            var claims = Jwts.parser()
+                    .verifyWith((java.security.interfaces.RSAPublicKey) tokenIssuer.getPublicKey())
+                    .build()
+                    .parseSignedClaims(refreshToken);
+            if (!"refresh".equals(claims.getPayload().get("type"))) {
+                return ResponseEntity.status(401).body(Map.of("error", "Token inválido"));
+            }
+            // Emitir nuevo access token con los datos del subject
+            String newAccessToken = tokenIssuer.issueAccessTokenFromSubject(claims.getPayload().getSubject());
+            return ResponseEntity.ok(Map.of("accessToken", newAccessToken));
+        } catch (Exception e) {
+            return ResponseEntity.status(401).body(Map.of("error", "Token expirado o inválido"));
+        }
+    }
+
+    // 5. Logout — invalida la sesión (cliente debe borrar sus tokens)
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(@RequestHeader(value = "Authorization", required = false) String authHeader) {
+        // En esta implementación stateless, el logout lo maneja el cliente
+        // borrando sus tokens. El servidor confirma la operación.
+        return ResponseEntity.ok(Map.of("message", "Sesión cerrada correctamente"));
     }
 
     // 3. JWKS — llaves públicas para que otros MS validen JWT

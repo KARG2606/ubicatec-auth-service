@@ -10,4 +10,7 @@ public interface TokenIssuerPort {
 
     String getJwks();
 
+    java.security.PublicKey getPublicKey();
+
+    String issueAccessTokenFromSubject(String userId);
 }
