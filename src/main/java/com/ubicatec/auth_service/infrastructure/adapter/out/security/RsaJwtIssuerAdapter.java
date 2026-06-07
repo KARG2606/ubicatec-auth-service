@@ -30,7 +30,7 @@ public class RsaJwtIssuerAdapter implements TokenIssuerPort {
 
     public RsaJwtIssuerAdapter() throws NoSuchAlgorithmException {
         KeyPairGenerator gen = KeyPairGenerator.getInstance("RSA");
-        gen.initialize(2048);
+        gen.initialize(1024);
         this.keyPair = gen.generateKeyPair();
     }
 
