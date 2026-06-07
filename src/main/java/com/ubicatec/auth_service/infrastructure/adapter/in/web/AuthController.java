@@ -31,9 +31,8 @@ public class AuthController {
     // 1. Enviar código OTP
     @PostMapping("/send-code")
     public ResponseEntity<?> sendCode(@Valid @RequestBody SendCodeRequest req) {
-        return ResponseEntity.ok("PRUEBA_KEVIN_2026");
-        //sendCode.sendCode(req.email());
-        //return ResponseEntity.ok(new OkResponse("Código enviado", req.email()));
+        sendCode.sendCode(req.email());
+        return ResponseEntity.ok(new OkResponse("Código enviado", req.email()));
     }
 
     // 2. Verificar código → devuelve JWT
