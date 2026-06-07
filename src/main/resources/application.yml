@@ -25,7 +25,7 @@ ubicatec:
     audience: ${JWT_AUDIENCE:ubicatec}
 
 server:
-  port: 8080
+  port: ${PORT:8080}
 
 management:
   endpoints:
