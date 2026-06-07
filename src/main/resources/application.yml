@@ -1,0 +1,53 @@
+spring:
+  datasource:
+    url: ${AZURE_SQL_URL}
+    username: ${AZURE_SQL_USER}
+    password: ${AZURE_SQL_PASSWORD}
+    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+
+  flyway:
+    enabled: true
+
+ubicatec:
+  email:
+    n8n:
+      webhook-url: ${N8N_WEBHOOK_URL}
+      webhook-secret: ${N8N_WEBHOOK_SECRET}
+      timeout-ms: ${N8N_TIMEOUT_MS:10000}
+
+  jwt:
+    issuer: ${JWT_ISSUER:ubicatec-auth}
+    audience: ${JWT_AUDIENCE:ubicatec}
+
+server:
+  port: 8080
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+logging:
+  level:
+    root: INFO
+    org.springframework: INFO
+    org.hibernate: INFO
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+server:
+  ssl:
+    client-auth: need
+    trust-store: classpath:apim-ca.p12
+    trust-store-password: ${SSL_TRUST_STORE_PASSWORD}
+    trust-store-type: PKCS12
