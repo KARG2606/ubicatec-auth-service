@@ -47,7 +47,8 @@ spring:
 
 server:
   ssl:
-    client-auth: need
-    trust-store: classpath:apim-ca.p12
-    trust-store-password: ${SSL_TRUST_STORE_PASSWORD}
-    trust-store-type: PKCS12
+    enabled: false
+  tomcat:
+    remoteip:
+      remote-ip-header: x-forwarded-for
+      protocol-header: x-forwarded-proto
