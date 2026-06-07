@@ -3,6 +3,7 @@ package com.ubicatec.auth_service.infrastructure.adapter.out.security;
 import com.ubicatec.auth_service.domain.model.User;
 import com.ubicatec.auth_service.domain.port.out.TokenIssuerPort;
 import io.jsonwebtoken.Jwts;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.security.KeyPair;
@@ -14,9 +15,16 @@ import java.util.Base64;
 import java.util.Date;
 import java.util.UUID;
 
+
+
 @Component
 public class RsaJwtIssuerAdapter implements TokenIssuerPort {
 
+    @Value("${ubicatec.jwt.issuer}")
+    private String issuer;
+
+    @Value("${ubicatec.jwt.audience}")
+    private String audience;
     private final KeyPair keyPair;
     private final String keyId = UUID.randomUUID().toString();
 
@@ -34,7 +42,8 @@ public class RsaJwtIssuerAdapter implements TokenIssuerPort {
                 .subject(user.id().toString())
                 .claim("email", user.email())
                 .claim("role", user.role().name())
-                .issuer("ubicatec-auth")
+                .issuer(issuer)
+                .audience().add(audience).and()
                 .issuedAt(Date.from(now))
                 .expiration(Date.from(now.plusSeconds(3600)))
                 .signWith(keyPair.getPrivate())
@@ -48,7 +57,7 @@ public class RsaJwtIssuerAdapter implements TokenIssuerPort {
         return Jwts.builder()
                 .subject(user.id().toString())
                 .claim("type", "refresh")
-                .issuer("ubicatec-auth")
+                .issuer(issuer)
                 .issuedAt(Date.from(now))
                 .expiration(Date.from(now.plusSeconds(30L * 24 * 3600)))
                 .signWith(keyPair.getPrivate())
@@ -85,7 +94,7 @@ public class RsaJwtIssuerAdapter implements TokenIssuerPort {
         Instant now = Instant.now();
         return Jwts.builder()
                 .subject(userId)
-                .issuer("ubicatec-auth")
+                .issuer(issuer)
                 .issuedAt(Date.from(now))
                 .expiration(Date.from(now.plusSeconds(3600)))
                 .signWith(keyPair.getPrivate())
