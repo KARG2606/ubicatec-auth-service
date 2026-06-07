@@ -56,7 +56,7 @@ public class SendCodeService implements SendCodeUseCase {
                 Instant.now().plusSeconds(OTP_TTL_MIN * 60), 0, null));
 
         // 6. Enviar por email (via n8n webhook)
-        //emailNotifier.sendOtp(email, code, OTP_TTL_MIN);
+        emailNotifier.sendOtp(email, code, OTP_TTL_MIN);
     }
 
     private String sha256(String input) {
