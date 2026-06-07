@@ -5,45 +5,15 @@ spring:
     password: ${AZURE_SQL_PASSWORD}
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
 
+  main:
+    lazy-initialization: true
+
   jpa:
     hibernate:
       ddl-auto: none
     show-sql: false
+    open-in-view: false
 
   flyway:
     enabled: true
     locations: classpath:db/migration
-
-ubicatec:
-  email:
-    n8n:
-      webhook-url: ${N8N_WEBHOOK_URL}
-      webhook-secret: ${N8N_WEBHOOK_SECRET}
-      timeout-ms: ${N8N_TIMEOUT_MS:10000}
-
-  jwt:
-    issuer: ${JWT_ISSUER:ubicatec-auth}
-    audience: ${JWT_AUDIENCE:ubicatec}
-
-server:
-  port: 8080
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info
-
-logging:
-  level:
-    root: INFO
-
----
-spring:
-  config:
-    activate:
-      on-profile: prod
-
-server:
-  ssl:
-    enabled: false
