@@ -36,11 +36,16 @@ public class AuthController {
         return ResponseEntity.ok(new OkResponse("Código enviado", req.email()));
     }
 
-    // 2. Verificar código → devuelve JWT
     @PostMapping("/verify-code")
     public ResponseEntity<?> verifyCode(@Valid @RequestBody VerifyCodeRequest req) {
-        var pair = verifyCode.verifyCode(req.email(), req.code());
-        return ResponseEntity.ok(pair);
+
+        verifyCode.verifyCode(req.email(), req.code());
+
+        return ResponseEntity.ok(
+                Map.of(
+                        "status", "verify ejecutado"
+                )
+        );
     }
 
     // 4. Refresh — renueva el access token usando el refresh token
