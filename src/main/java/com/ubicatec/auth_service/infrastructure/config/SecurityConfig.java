@@ -26,12 +26,7 @@ public class SecurityConfig {
                                 "/actuator/health",
                                 "/actuator/info"
                         ).permitAll()
-                        .requestMatchers(
-                                "/v1/auth/me",
-                                "/v1/auth/refresh",
-                                "/v1/auth/logout"
-                        ).authenticated()
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll()  // temporal — permite todo
                 );
 
         return http.build();
