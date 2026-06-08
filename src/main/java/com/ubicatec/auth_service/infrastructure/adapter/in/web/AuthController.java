@@ -15,7 +15,6 @@ import java.util.Map;
 @RestController
 @RequestMapping("/v1/auth")
 public class AuthController {
-
     private final SendCodeUseCase sendCode;
     private final VerifyCodeUseCase verifyCode;
     private final TokenIssuerPort tokenIssuer;
@@ -28,9 +27,11 @@ public class AuthController {
         this.tokenIssuer = tokenIssuer;
     }
 
+
     // 1. Enviar código OTP
     @PostMapping("/send-code")
     public ResponseEntity<?> sendCode(@Valid @RequestBody SendCodeRequest req) {
+        System.out.println("ENTRÓ AL SEND-CODE CONTROLLER");
         sendCode.sendCode(req.email());
         return ResponseEntity.ok(new OkResponse("Código enviado", req.email()));
     }
