@@ -8,6 +8,8 @@ import java.util.UUID;
 
 public interface SpringDataOtpRepository extends JpaRepository<OtpChallengeEntity, UUID> {
 
-    Optional<OtpChallengeEntity> findTopByEmailOrderByExpiresAtDesc(String email);
+
+    Optional<OtpChallengeEntity>
+    findTopByEmailAndConsumedAtIsNullOrderByExpiresAtDesc(String email);
 
 }

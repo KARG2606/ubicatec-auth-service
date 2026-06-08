@@ -30,8 +30,7 @@ public class OtpJpaAdapter implements OtpRepositoryPort {
     public Optional<OtpChallenge> findActiveByEmail(String email) {
 
         return repository
-                .findTopByEmailOrderByExpiresAtDesc(email)
-                .filter(e -> e.getConsumedAt() == null)
+                .findTopByEmailAndConsumedAtIsNullOrderByExpiresAtDesc(email)
                 .filter(e -> e.getExpiresAt().isAfter(Instant.now()))
                 .map(this::toDomain);
     }
