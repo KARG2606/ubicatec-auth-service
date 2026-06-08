@@ -66,7 +66,7 @@ public class SendCodeService implements SendCodeUseCase {
     private String sha256(String input) {
         try {
             var md = MessageDigest.getInstance("SHA-256");
-            byte[] hash = md.digest(input.getBytes());
+            byte[] hash = md.digest(input.getBytes(java.nio.charset.StandardCharsets.UTF_8));
             var sb = new StringBuilder();
             for (byte b : hash) sb.append(String.format("%02x", b));
             return sb.toString();
