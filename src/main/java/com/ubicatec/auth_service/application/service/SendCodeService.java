@@ -32,7 +32,9 @@ public class SendCodeService implements SendCodeUseCase {
     @Override
     public void sendCode(String email) {
         // 1. Validar dominio institucional
+        System.out.println("PASO 1");
         String domain = email.substring(email.indexOf('@') + 1);
+        System.out.println("PASO 2");
         boolean allowed = false;
         for (String d : ALLOWED) { if (d.equals(domain)) { allowed = true; break; } }
         if (!allowed) throw new IllegalArgumentException("Correo no institucional");
@@ -52,11 +54,13 @@ public class SendCodeService implements SendCodeUseCase {
         String hash = sha256(code);
 
         // 5. Persistir el OTP
+        System.out.println("PASO 3");
         otpRepo.save(new OtpChallenge(UUID.randomUUID(), email, hash,
                 Instant.now().plusSeconds(OTP_TTL_MIN * 60), 0, null));
 
         // 6. Enviar por email (via n8n webhook)
         emailNotifier.sendOtp(email, code, OTP_TTL_MIN);
+        System.out.println("PASO 4");
     }
 
     private String sha256(String input) {
